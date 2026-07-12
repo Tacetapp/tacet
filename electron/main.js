@@ -825,8 +825,15 @@ ipcMain.handle('onboarding:requestMic', async () => {
   }
 });
 
-ipcMain.handle('onboarding:openScreenSettings', () => {
-  // Screen Recording can't be granted programmatically — deep-link the pane.
+ipcMain.handle('onboarding:openScreenSettings', async () => {
+  // Screen Recording can't be granted programmatically — but the app only
+  // APPEARS in that settings pane after it has attempted a capture API call.
+  // Touch desktopCapturer once so macOS registers Tacet in the pane (and shows
+  // its own prompt on first use), then deep-link the pane.
+  try {
+    const { desktopCapturer } = require('electron');
+    await desktopCapturer.getSources({ types: ['screen'], thumbnailSize: { width: 1, height: 1 } });
+  } catch { /* registration attempt is best-effort */ }
   shell.openExternal(
     'x-apple.systempreferences:com.apple.preference.security?Privacy_ScreenCapture',
   );
