@@ -52,6 +52,11 @@ needs one, done.
 
 > Packaged releases are coming — once they ship, install becomes
 > `brew install --cask tacetapp/tap/tacet` with no build tools required.
+>
+> Release DMGs are currently **unsigned**: if macOS reports the app "damaged"
+> after a browser download, run `xattr -cr /Applications/Tacet.app` once and
+> open normally (browser downloads carry a quarantine flag; `curl -LO` and
+> Homebrew installs do not).
 
 On first meeting start, macOS prompts for **Screen Recording** and **Microphone**
 permissions — click Allow.
