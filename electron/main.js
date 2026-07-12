@@ -257,7 +257,12 @@ function isPortFree(port) {
 }
 
 async function pickPort() {
-  if (await isPortFree(PREFERRED_PORT)) return PREFERRED_PORT;
+  // Packaged app: ALWAYS use an ephemeral port. A "free" check on 8000 can
+  // false-positive when another server holds the wildcard bind (BSD lets a
+  // specific 127.0.0.1 bind coexist with 0.0.0.0 under SO_REUSEADDR), which
+  // let a foreign dev server share the port and answer our window's WS.
+  // Only dev builds prefer the stable 8000 (for the Vite /ws proxy).
+  if (!app.isPackaged && await isPortFree(PREFERRED_PORT)) return PREFERRED_PORT;
   // Fall back to an OS-assigned ephemeral port. The frontend derives the
   // WebSocket URL from window.location, so any port works.
   return new Promise((resolve, reject) => {
