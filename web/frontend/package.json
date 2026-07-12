@@ -1,0 +1,20 @@
+{
+  "name": "tacet-frontend",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^6.0.0"
+  },
+  "dependencies": {
+    "@fontsource/dm-mono": "^5.2.7",
+    "@fontsource/dm-sans": "^5.2.8",
+    "@fontsource/newsreader": "^5.2.10",
+    "dompurify": "^3.3.3",
+    "marked": "^17.0.5"
+  }
+}

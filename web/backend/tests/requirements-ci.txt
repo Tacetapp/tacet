@@ -1,0 +1,18 @@
+# Minimal dependency set to run the backend test suite on CI.
+#
+# The full app depends on a multi-gigabyte ML stack (torch, mlx-whisper /
+# faster-whisper + ctranslate2, speechbrain, silero-vad, onnxruntime). None of
+# those are imported at *test* time: main.py's `import ctranslate2` is guarded by
+# try/except, and the transcriber/embedder/whisper-backend/skimage imports are
+# all lazy (inside functions). So the suite runs green with just the light deps
+# below — keep this file in sync with the top-level web/backend/requirements.txt
+# for the packages it does pull in.
+fastapi>=0.110.0
+httpx>=0.27.0          # required by starlette's TestClient (WS + HTTP)
+websockets>=12.0
+anthropic[bedrock]>=0.116.0  # bedrock_service (Anthropic SDK, imported by main.py) + test_bedrock; brings boto3/botocore transitively (test_main_lifecycle imports botocore)
+numpy>=1.24.0          # imported at module load by transcriber/screen_analyzer
+Pillow>=10.0.0         # imported at module load by screen_analyzer
+pyyaml>=6.0            # knowledge_store / session_store frontmatter
+pytest>=8.0
+pytest-asyncio>=0.23   # asyncio_mode=auto in pyproject.toml

@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.backends._legacy:_Backend"
+
+[project]
+name = "tacet"
+version = "0.1.0"
+description = "Tacet — a local-first macOS meeting assistant: on-device transcription and speaker diarization, bring-your-own-LLM for insights and summaries."
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "Muthu Kumar" }]
+
+[project.urls]
+Homepage = "https://github.com/tacetapp/tacet"
+Repository = "https://github.com/tacetapp/tacet"
+dependencies = [
+    "fastapi>=0.110.0",
+    "uvicorn[standard]>=0.29.0",
+    "websockets>=12.0",
+    "boto3>=1.35.0",
+    "numpy>=1.24.0",
+    "Pillow>=10.0.0",
+    "mlx-whisper>=0.4.0; platform_machine == 'arm64'",
+    "faster-whisper>=1.1.0; platform_machine != 'arm64'",
+    "silero-vad>=5.0",
+    "onnxruntime>=1.17.0",
+    "pyyaml>=6.0",
+    "scikit-image>=0.21.0",
+    "speechbrain>=1.0.0",
+]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"

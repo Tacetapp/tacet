@@ -1,0 +1,92 @@
+name: Release
+
+# Build per-architecture macOS DMGs and attach them to the GitHub Release when a
+# version tag is pushed (e.g. `git tag v0.1.0 && git push origin v0.1.0`).
+#
+# arm64 builds on an Apple Silicon runner (macos-14); x64 builds on an Intel
+# runner (macos-13). Native Python wheels (torch / ctranslate2 / mlx) are
+# arch-specific, so each DMG MUST be built on its target architecture — there is
+# no cross-compilation. The app is unsigned / not notarized (no Apple Developer
+# ID); Gatekeeper is bypassed by the user on first open. See electron/PACKAGING.md.
+
+on:
+  push:
+    tags:
+      - "v*"
+
+# The release job needs to create/update the GitHub Release and upload assets.
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  dmg:
+    name: Build DMG (${{ matrix.arch }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-14      # Apple Silicon runner
+            arch: arm64
+            eb_arch: "--arm64"
+          - os: macos-13      # Intel runner
+            arch: x64
+            eb_arch: "--x64"
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v5
+
+      # ── Frontend: install + build the Vite bundle into web/backend/static ──
+      - name: Install frontend deps
+        working-directory: web/frontend
+        run: npm ci
+
+      - name: Build frontend
+        working-directory: web/frontend
+        run: npm run build
+
+      # ── Swift capture helper (bin/capture-helper) ──
+      - name: Build Swift capture helper
+        run: bash scripts/build_swift.sh
+
+      # ── Relocatable, self-contained Python runtime for THIS arch ──
+      - name: Build Python runtime
+        run: bash electron/build-python-runtime.sh
+
+      # ── Electron shell deps + electron-builder DMG ──
+      - name: Install electron deps
+        working-directory: electron
+        run: npm ci
+
+      - name: Build DMG
+        working-directory: electron
+        env:
+          # Unsigned build: don't let electron-builder try to auto-discover a
+          # signing identity on the runner (identity is null in package.json).
+          CSC_IDENTITY_AUTO_DISCOVERY: "false"
+        run: npx electron-builder --mac dmg ${{ matrix.eb_arch }}
+
+      - name: List build output
+        run: ls -lh electron/dist/*.dmg
+
+      - name: Upload DMG to the GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: electron/dist/*.dmg
+          fail_on_unmatched_files: true

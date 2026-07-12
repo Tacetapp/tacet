@@ -1,0 +1,84 @@
+{
+  "name": "tacet",
+  "productName": "Tacet",
+  "version": "0.1.0",
+  "description": "Self-contained desktop app for a local, real-time meeting assistant (Electron shell + bundled Python server).",
+  "main": "main.js",
+  "author": "Muthu Kumar (https://github.com/klmuthu)",
+  "license": "MIT",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder --mac dmg",
+    "dist:arm64": "electron-builder --mac dmg --arm64",
+    "dist:x64": "electron-builder --mac dmg --x64"
+  },
+  "devDependencies": {
+    "electron": "^33.4.11",
+    "electron-builder": "^25.0.0"
+  },
+  "build": {
+    "appId": "app.tacet.desktop",
+    "productName": "Tacet",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "config.js",
+      "settings.html",
+      "settings.css",
+      "settings.js",
+      "loading.html",
+      "onboarding.html",
+      "onboarding.js",
+      "onboarding-preload.js"
+    ],
+    "extraResources": [
+      {
+        "from": "../web",
+        "to": "backend/web",
+        "filter": [
+          "**/*",
+          "!frontend/node_modules/**",
+          "!backend/sessions/**",
+          "!**/__pycache__/**"
+        ]
+      },
+      {
+        "from": "../bin",
+        "to": "backend/bin",
+        "filter": [
+          "capture-helper"
+        ]
+      },
+      {
+        "from": "../prompts",
+        "to": "backend/prompts"
+      },
+      {
+        "from": "../python-runtime",
+        "to": "backend/.venv"
+      }
+    ],
+    "mac": {
+      "category": "public.app-category.productivity",
+      "target": [
+        {
+          "target": "dmg"
+        }
+      ],
+      "identity": null,
+      "hardenedRuntime": false,
+      "entitlements": "entitlements.mac.plist",
+      "entitlementsInherit": "entitlements.mac.plist",
+      "extendInfo": {
+        "NSMicrophoneUsageDescription": "Tacet transcribes your microphone locally during meetings.",
+        "NSCameraUsageDescription": "Not used; present for completeness."
+      }
+    },
+    "dmg": {
+      "artifactName": "${productName}-${version}-${arch}.${ext}"
+    }
+  }
+}

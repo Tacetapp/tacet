@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline';" />
+    <title>Settings</title>
+    <link rel="stylesheet" href="settings.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="topbar-row">
+        <h1>Settings</h1>
+        <span id="restartNote" class="restart-note hidden">Restart pending on save</span>
+      </div>
+      <input id="search" type="search" placeholder="Search settings…" autocomplete="off" spellcheck="false" />
+    </header>
+
+    <div class="shell">
+      <nav id="sidebar" class="sidebar"></nav>
+      <main id="content" class="content"></main>
+    </div>
+
+    <footer class="footer">
+      <button id="logBtn" class="ghost" type="button">Open server log</button>
+      <div class="spacer"></div>
+      <span id="status" class="status"></span>
+      <button id="saveBtn" class="primary" type="button">Save &amp; restart</button>
+    </footer>
+
+    <script src="settings.js"></script>
+  </body>
+</html>

@@ -1,0 +1,277 @@
+:root {
+  color-scheme: dark;
+  --bg: #0d1117;
+  --panel: #161b22;
+  --panel-2: #1c232c;
+  --border: #2d333b;
+  --text: #e6edf3;
+  --muted: #8b949e;
+  --accent: #4f8cff;
+  --accent-press: #3b76e6;
+  --ok: #3fb950;
+  --err: #f85149;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font: 13.5px/1.5 -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+/* ── Top bar ─────────────────────────────────────────────── */
+.topbar {
+  padding: 14px 20px 12px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg);
+  flex-shrink: 0;
+}
+
+.topbar-row {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.topbar h1 {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 600;
+}
+
+#search {
+  width: 100%;
+  padding: 7px 10px;
+  background: var(--panel);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  font: inherit;
+  font-size: 13px;
+  outline: none;
+  appearance: none;
+  -webkit-appearance: none;
+}
+#search:focus { border-color: var(--accent); }
+#search::placeholder { color: var(--muted); }
+
+/* ── Shell layout ────────────────────────────────────────── */
+.shell {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  min-height: 0;
+}
+
+/* ── Sidebar ─────────────────────────────────────────────── */
+.sidebar {
+  width: 152px;
+  flex-shrink: 0;
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  padding: 8px 0;
+  background: var(--panel);
+}
+
+body.searching .sidebar { opacity: 0.4; pointer-events: none; }
+
+.sidebar-item {
+  display: block;
+  width: 100%;
+  padding: 7px 14px;
+  background: transparent;
+  border: none;
+  border-left: 2px solid transparent;
+  color: var(--muted);
+  cursor: pointer;
+  font: inherit;
+  font-size: 13px;
+  text-align: left;
+  user-select: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.sidebar-item:hover { color: var(--text); background: var(--panel-2); }
+.sidebar-item.active {
+  color: var(--accent);
+  border-left-color: var(--accent);
+  font-weight: 500;
+  background: var(--panel-2);
+}
+
+/* ── Content area ────────────────────────────────────────── */
+.content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 18px 20px 28px;
+  min-width: 0;
+}
+
+/* ── Section panels ──────────────────────────────────────── */
+.section-panel {
+  display: none;
+  margin-bottom: 4px;
+}
+.section-panel.active { display: block; }
+
+/* In search mode: show panels that have visible fields */
+body.searching .section-panel.search-visible { display: block; }
+
+.group {
+  margin-bottom: 20px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.group > h2 {
+  margin: 0;
+  padding: 11px 16px 9px;
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.35px;
+  text-transform: uppercase;
+  color: var(--accent);
+  background: var(--panel-2);
+  border-bottom: 1px solid var(--border);
+}
+
+.group > .blurb {
+  margin: 0;
+  padding: 10px 16px 2px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+/* ── Fields ──────────────────────────────────────────────── */
+.field {
+  padding: 11px 16px;
+  border-top: 1px solid transparent;
+}
+.field + .field { border-top: 1px solid var(--border); }
+.field.search-hidden { display: none; }
+/* Hidden because it doesn't apply to the selected provider (schema showWhen). */
+.field.cond-hidden { display: none; }
+
+.field-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+.field-header label.title {
+  flex: 1;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.field .help {
+  margin: 6px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.field input[type='text'],
+.field input[type='password'],
+.field input[type='number'],
+.field select {
+  width: 100%;
+  padding: 7px 10px;
+  background: var(--bg);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  font: inherit;
+  outline: none;
+}
+.field input:focus,
+.field select:focus { border-color: var(--accent); }
+
+.row { display: flex; gap: 8px; }
+.row input { flex: 1; }
+
+/* ── Per-field reset button ──────────────────────────────── */
+.btn-reset {
+  padding: 1px 6px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  color: var(--muted);
+  cursor: pointer;
+  font: inherit;
+  font-size: 12px;
+  line-height: 1.5;
+  flex-shrink: 0;
+  transition: color 0.1s, border-color 0.1s;
+}
+.btn-reset:hover {
+  border-color: var(--border);
+  color: var(--text);
+  background: var(--panel-2);
+}
+.btn-reset:active { color: var(--accent); }
+
+/* ── Common buttons ──────────────────────────────────────── */
+button {
+  font: inherit;
+  cursor: pointer;
+  border-radius: 7px;
+  border: 1px solid var(--border);
+  padding: 8px 14px;
+  background: var(--panel-2);
+  color: var(--text);
+}
+button:hover { border-color: var(--accent); }
+
+button.browse {
+  white-space: nowrap;
+  padding: 7px 12px;
+}
+
+.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+  font-weight: 600;
+}
+.primary:hover { background: var(--accent-press); border-color: var(--accent-press); }
+.primary:disabled { opacity: 0.55; cursor: default; }
+
+.ghost { background: transparent; }
+
+/* ── Footer ──────────────────────────────────────────────── */
+.footer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 20px;
+  border-top: 1px solid var(--border);
+  background: var(--bg);
+  flex-shrink: 0;
+}
+.footer .spacer { flex: 1; }
+
+.status { font-size: 12.5px; color: var(--muted); }
+.status.ok { color: var(--ok); }
+.status.err { color: var(--err); }
+
+/* ── Restart pending note ────────────────────────────────── */
+.restart-note {
+  font-size: 12px;
+  color: var(--accent);
+  opacity: 0.85;
+}
+.restart-note.hidden { display: none; }

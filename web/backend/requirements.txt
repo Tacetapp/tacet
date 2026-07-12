@@ -1,0 +1,20 @@
+fastapi>=0.110.0
+uvicorn[standard]>=0.29.0
+websockets>=12.0
+# anthropic[bedrock] is the Bedrock provider (Anthropic SDK) and pulls in
+# boto3/botocore transitively for the SigV4 credential-chain fallback.
+anthropic[bedrock]>=0.116.0
+httpx>=0.27.0
+numpy>=1.24.0
+Pillow>=10.0.0
+mlx-whisper>=0.4.0; platform_machine == "arm64"
+faster-whisper>=1.1.0; platform_machine != "arm64"
+silero-vad>=5.0
+onnxruntime>=1.17.0
+pyyaml>=6.0
+scikit-image>=0.21.0
+# speechbrain 1.1.x calls torch.amp.custom_fwd (torch >=2.4), but torch is
+# capped at 2.2.x for Intel-mac wheel support; speaker_embedder.py installs a
+# CPU-safe compat shim before importing speechbrain. (1.0.x is no alternative:
+# it breaks against modern huggingface_hub's removed `use_auth_token`.)
+speechbrain>=1.1

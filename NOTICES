@@ -1,0 +1,46 @@
+Tacet — Third-Party Notices
+===========================
+
+Tacet is licensed under the MIT License (see LICENSE). It bundles and, at
+runtime, downloads third-party components under their own licenses, credited
+below.
+
+
+Bundled fonts (@fontsource) — SIL Open Font License 1.1
+-------------------------------------------------------
+
+The frontend bundles the following typefaces via @fontsource:
+
+  - DM Sans      — © The DM Sans Project Authors
+  - DM Mono      — © The DM Mono Project Authors
+  - Newsreader   — © The Newsreader Project Authors
+
+These fonts are licensed under the SIL Open Font License, Version 1.1. The
+OFL requires that this attribution be retained; the full license text is
+available at https://openfontlicense.org and is distributed with each font
+package under web/frontend/node_modules/@fontsource/*/LICENSE.
+
+
+Bundled JavaScript libraries
+----------------------------
+
+  - DOMPurify (https://github.com/cure53/DOMPurify) — dual-licensed under
+    Apache License 2.0 or Mozilla Public License 2.0. Tacet uses it under the
+    Apache License 2.0 option.
+  - marked (https://github.com/markedjs/marked) — MIT License.
+
+
+Runtime-downloaded models
+-------------------------
+
+The following models are NOT bundled — they are fetched from Hugging Face on
+first run and are used under their own licenses:
+
+  - OpenAI Whisper weights (whisper-large-v3-turbo and related) — MIT License.
+  - distil-whisper — MIT License.
+  - SpeechBrain ECAPA-TDNN speaker embeddings
+    (speechbrain/spkrec-ecapa-voxceleb) — Apache License 2.0.
+  - Silero VAD — MIT License.
+
+Each model retains the license of its upstream publisher; refer to the
+respective model cards on Hugging Face for full terms.
