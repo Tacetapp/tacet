@@ -362,11 +362,13 @@ class BedrockService(LLMService):
         except _AWS_TOKEN_ERRORS:
             logger.error("[Bedrock] AWS SSO token expired")
             raise RuntimeError(bedrock_auth_error_message())
-        except (anthropic.AuthenticationError, anthropic.PermissionDeniedError):
-            # 401/403 — rejected bearer token (API-key mode) or expired SigV4
-            # credentials (SSO mode). Mapped to a friendly, mode-aware message.
-            logger.error("[Bedrock] authentication failed (bad/expired credentials?)")
-            raise RuntimeError(bedrock_auth_error_message())
+        except (anthropic.AuthenticationError, anthropic.PermissionDeniedError) as e:
+            # 401/403 — rejected/expired bearer, missing model access, or region
+            # mismatch. Keep the service's own reason: it distinguishes an
+            # expired short-term key from an un-enabled model instantly.
+            detail = str(e)[:200]
+            logger.error(f"[Bedrock] auth/permission failure: {detail}")
+            raise RuntimeError(f"{bedrock_auth_error_message()} (service said: {detail})")
         except (anthropic.NotFoundError, anthropic.BadRequestError) as e:
             # Bad/unavailable model id → friendly, actionable message. Only remap
             # errors clearly about the model; everything else propagates as-is.
@@ -479,11 +481,13 @@ class BedrockService(LLMService):
         except _AWS_TOKEN_ERRORS:
             logger.error("[Bedrock] AWS SSO token expired")
             raise RuntimeError(bedrock_auth_error_message())
-        except (anthropic.AuthenticationError, anthropic.PermissionDeniedError):
-            # 401/403 — rejected bearer token (API-key mode) or expired SigV4
-            # credentials (SSO mode). Mapped to a friendly, mode-aware message.
-            logger.error("[Bedrock] authentication failed (bad/expired credentials?)")
-            raise RuntimeError(bedrock_auth_error_message())
+        except (anthropic.AuthenticationError, anthropic.PermissionDeniedError) as e:
+            # 401/403 — rejected/expired bearer, missing model access, or region
+            # mismatch. Keep the service's own reason: it distinguishes an
+            # expired short-term key from an un-enabled model instantly.
+            detail = str(e)[:200]
+            logger.error(f"[Bedrock] auth/permission failure: {detail}")
+            raise RuntimeError(f"{bedrock_auth_error_message()} (service said: {detail})")
         except (anthropic.NotFoundError, anthropic.BadRequestError) as e:
             # Bad/unavailable model id → friendly, actionable message. Only remap
             # errors clearly about the model; everything else propagates as-is.
