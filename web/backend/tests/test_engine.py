@@ -7,6 +7,16 @@ from web.backend.engine import MeetingEngine
 from web.backend.bedrock_service import BedrockService
 from web.backend.srt_parser import SrtSegment
 
+async def _wait_until(cond, timeout=5.0):
+    """Poll `cond` until true — replaces fixed sleeps that flake on slow CI runners."""
+    import time as _t
+    deadline = _t.monotonic() + timeout
+    while _t.monotonic() < deadline:
+        if cond():
+            return
+        await asyncio.sleep(0.01)
+
+
 
 def _seg(i, text="line"):
     return SrtSegment(i, "00:00:01,000", "00:00:03,000", f"{text} {i}")
@@ -215,7 +225,7 @@ async def test_analysis_coalesces_never_runs_concurrently():
     engine._last_analysis_at = 0.0  # long ago → interval trigger fires
     engine._pending_segments = [_long(1), _long(2), _long(3)]
     engine._maybe_spawn_analysis()
-    await asyncio.sleep(0.02)
+    await _wait_until(lambda: state["calls"] == 1)
     assert state["calls"] == 1
     assert engine._analysis_in_flight is True
     assert engine._pending_segments == []  # the batch was taken, not queued
@@ -224,13 +234,13 @@ async def test_analysis_coalesces_never_runs_concurrently():
     engine._last_analysis_at = 0.0
     engine._pending_segments = [_long(4), _long(5), _long(6)]
     engine._maybe_spawn_analysis()
-    await asyncio.sleep(0.02)
+    await asyncio.sleep(0.2)   # settle window: assert NO second call spawned
     assert state["calls"] == 1
     assert len(engine._pending_segments) == 3  # still accumulating
 
     # Release the in-flight call → exactly one follow-up fires for the backlog.
     gate.set()
-    await asyncio.sleep(0.05)
+    await _wait_until(lambda: state["calls"] == 2 and not engine._analysis_in_flight)
     assert state["calls"] == 2
     assert state["max"] == 1  # never two at once
     assert engine._analysis_in_flight is False

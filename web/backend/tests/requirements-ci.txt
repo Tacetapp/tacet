@@ -16,3 +16,4 @@ Pillow>=10.0.0         # imported at module load by screen_analyzer
 pyyaml>=6.0            # knowledge_store / session_store frontmatter
 pytest>=8.0
 pytest-asyncio>=0.23   # asyncio_mode=auto in pyproject.toml
+scipy>=1.10  # speaker reconcile (transitive via speechbrain locally; explicit for slim CI)
