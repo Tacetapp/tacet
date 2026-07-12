@@ -33,9 +33,12 @@ jobs:
           - os: macos-14      # Apple Silicon runner
             arch: arm64
             eb_arch: "--arm64"
-          - os: macos-13      # Intel runner
-            arch: x64
-            eb_arch: "--x64"
+          # NOTE: no free x64 macOS runners exist anymore (GitHub retired
+          # macos-13; macos-14/15 are arm64-only and *-large x64 runners are
+          # paid). Intel DMGs are built on an Intel Mac and uploaded manually:
+          #   bash electron/build-python-runtime.sh
+          #   cd electron && npm run dist
+          #   gh release upload <tag> electron/dist/Tacet-<ver>-x64.dmg
     steps:
       - uses: actions/checkout@v5
 
