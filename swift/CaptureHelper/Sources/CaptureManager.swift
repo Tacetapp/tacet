@@ -139,8 +139,13 @@ final class CaptureManager: NSObject, SCStreamDelegate, SCStreamOutput {
             handleScreenFrame(sampleBuffer)
         case .audio:
             handleAudioBuffer(sampleBuffer)
+#if compiler(>=6.0)
+        // SCStreamOutputType.microphone exists only in the macOS 15 SDK (Xcode 16+).
+        // Mic capture actually runs via AVAudioEngine, so this case never fires;
+        // guarded so the helper still compiles on older SDKs (CI x64 runners).
         case .microphone:
             handleAudioBuffer(sampleBuffer)
+#endif
         @unknown default:
             break
         }
