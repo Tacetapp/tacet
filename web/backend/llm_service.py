@@ -179,7 +179,7 @@ def create_llm_service(
         base_url = os.environ.get("OLLAMA_BASE_URL", "http://localhost:11434/v1")
         return OpenAICompatService(
             model_id=model,
-            api_key="",
+            api_key=os.environ.get("OLLAMA_API_KEY", ""),
             base_url=base_url,
             provider_label="Ollama",
             supports_vision=False,

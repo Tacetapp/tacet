@@ -88,6 +88,7 @@ def test_factory_ollama_provider(monkeypatch):
 
     monkeypatch.setenv("LLM_PROVIDER", "ollama")
     monkeypatch.setenv("OLLAMA_MODEL", "llama3.1")
+    monkeypatch.delenv("OLLAMA_API_KEY", raising=False)
     monkeypatch.setenv("OLLAMA_BASE_URL", "http://localhost:11434/v1")
     svc = create_llm_service()
     assert isinstance(svc, OpenAICompatService)
@@ -129,3 +130,15 @@ def test_factory_ollama_fast_tier_override(monkeypatch):
 
 def test_msg_shape():
     assert LLMService.msg("user", "hi") == {"role": "user", "content": [{"text": "hi"}]}
+
+
+@pytest.mark.parametrize("api_key", ["", "test-local-token"])
+def test_ollama_optional_auth_header(monkeypatch, api_key):
+    monkeypatch.setenv("LLM_PROVIDER", "ollama")
+    monkeypatch.setenv("OLLAMA_API_KEY", api_key)
+    for fast in (False, True):
+        svc = create_llm_service(fast=fast)
+        assert not svc._require_api_key
+        assert svc._headers().get("Authorization") == (
+            f"Bearer {api_key}" if api_key else None
+        )
