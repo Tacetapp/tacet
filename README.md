@@ -93,6 +93,16 @@ available with Ollama.
 Set `OLLAMA_MODEL` to any model you have pulled (default `llama3.1`). Override
 the endpoint with `OLLAMA_BASE_URL` if Ollama is running on a non-default port.
 
+The same connector can target other OpenAI-compatible servers, such as oMLX.
+Choose **Ollama (local)**, set **Ollama base URL** to the server's `/v1` URL,
+and use the exact model ID exposed by that server. If authentication is required,
+set **Local server API key (optional)** in Settings, or `OLLAMA_API_KEY` in the
+web server's environment. Tacet sends it as a Bearer token; desktop Settings
+store it through the same encrypted secret storage as other provider keys.
+Leave it blank for unauthenticated Ollama. A remote endpoint receives meeting
+text on that machine; it is only fully on-device when the endpoint is local.
+Screen analysis remains unavailable through this connector.
+
 ### AWS Bedrock
 
 1. In the AWS console, open **Bedrock → API keys** and generate a key.

@@ -50,7 +50,7 @@ const SCHEMA = [
           { value: 'ollama', label: 'Ollama (local)' },
           { value: 'bedrock', label: 'AWS Bedrock' },
         ],
-        help: 'Which LLM powers insights, chat, and summaries. OpenRouter/Venice use an API key stored encrypted below. Ollama runs fully local — no API key, no cloud calls. Bedrock authenticates with the Bedrock API key below (or an AWS profile/SSO as a fallback) via the official Anthropic SDK, using the anthropic.-prefixed model IDs below.',
+        help: 'Which LLM powers insights, chat, and summaries. OpenRouter/Venice use an API key stored encrypted below. Ollama defaults to local inference without an API key; custom endpoints can use the optional server API key. Bedrock authenticates with the Bedrock API key below (or an AWS profile/SSO as a fallback) via the official Anthropic SDK, using the anthropic.-prefixed model IDs below.',
       },
       // ── AWS Bedrock — via the official Anthropic SDK. Shown only for 'bedrock'.
       {
@@ -170,11 +170,19 @@ const SCHEMA = [
         showWhen: SHOW_OLLAMA,
       },
       {
+        key: 'OLLAMA_API_KEY',
+        label: 'Local server API key (optional)',
+        type: 'password',
+        placeholder: 'Required only by authenticated servers',
+        help: 'Bearer token for an authenticated OpenAI-compatible server such as oMLX. Stored using the OS keychain.',
+        showWhen: SHOW_OLLAMA,
+      },
+      {
         key: 'OLLAMA_MODEL',
         label: 'Ollama model',
         type: 'text',
         placeholder: 'llama3.1',
-        help: 'Model to use with Ollama (e.g. llama3.1, mistral, qwen2.5). Fully local inference — no API key required, meeting text never leaves your Mac. Screen analysis is unavailable with Ollama (no vision endpoint).',
+        help: 'Model to use with Ollama (e.g. llama3.1, mistral, qwen2.5). Inference runs on the configured server. No API key is needed for standard local Ollama. Screen analysis is unavailable through this connector.',
         showWhen: SHOW_OLLAMA,
       },
       {
